@@ -1,9 +1,9 @@
-import React from 'react'
+// import React from 'react'; // 이 줄 제거
 
-const index = () => {
+export default function Grid() {
     return (
-        <div>index</div>
-    )
+        <div>
+            Grid Page
+        </div>
+    );
 }
-
-export default index
