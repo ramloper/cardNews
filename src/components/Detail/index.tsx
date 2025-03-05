@@ -1,8 +1,6 @@
-import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon, } from '@heroicons/react/24/solid';
-import { HeartIcon, ChatBubbleOvalLeftIcon } from '@heroicons/react/24/outline';
-import { ThumbnailType } from '../../types/thumbnail';
-import { useEffect, useCallback, useState } from 'react';
-import { title } from 'process';
+import { HeartIcon } from '@heroicons/react/24/outline';
+import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon, } from '@heroicons/react/24/solid';
+import { useCallback, useEffect, useState } from 'react';
 
 interface DetailProps {
     id: number;
@@ -51,6 +49,7 @@ const mockData = {
 }
 
 export default function Detail({ id, onClose }: DetailProps) {
+    id = 1;
     const [currentIndex, setCurrentIndex] = useState(0);
     const [touchStart, setTouchStart] = useState<number | null>(null);
     const [touchEnd, setTouchEnd] = useState<number | null>(null);
