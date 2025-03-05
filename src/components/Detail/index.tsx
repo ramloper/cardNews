@@ -1,5 +1,5 @@
-import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
-import { HeartIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon, } from '@heroicons/react/24/solid';
+import { HeartIcon, ChatBubbleOvalLeftIcon } from '@heroicons/react/24/outline';
 import { ThumbnailType } from '../../types/thumbnail';
 import { useEffect, useCallback, useState } from 'react';
 import { title } from 'process';
@@ -15,6 +15,38 @@ const mockData = {
     memberName: "제제",
     title: "타이틀",
     content: "여기 내용이 들어감",
+    comments: [
+        {
+            commnetId: 1,
+            commentMemberName: "지혜",
+            commentContent: "댓글이 길다면?댓글이 길다면?댓글이 길다면?댓글이 길다면?댓글이 길다면?댓글이 길다면?",
+            commentProfileImg: "/img/salgu1.jpg"
+        },
+        {
+            commnetId: 2,
+            commentMemberName: "지혜",
+            commentContent: "좋은 글 잘 읽었습니다.",
+            commentProfileImg: "/img/salgu1.jpg"
+        },
+        {
+            commnetId: 3,
+            commentMemberName: "지혜",
+            commentContent: "좋은 글 잘 읽었습니다.",
+            commentProfileImg: "/img/salgu1.jpg"
+        },
+        {
+            commnetId: 4,
+            commentMemberName: "지혜",
+            commentContent: "좋은 글 잘 읽었습니다.",
+            commentProfileImg: "/img/salgu1.jpg"
+        },
+        {
+            commnetId: 5,
+            commentMemberName: "지혜",
+            commentContent: "좋은 글 잘 읽었습니다.",
+            commentProfileImg: "/img/salgu1.jpg"
+        }
+    ],
     likeCount: 10,
 }
 
@@ -97,9 +129,9 @@ export default function Detail({ id, onClose }: DetailProps) {
                 <XMarkIcon className="w-8 h-8" />
             </button>
 
-            <div className="max-w-6xl w-full bg-white dark:bg-gray-800 flex h-[80vh]">
-                {/* 왼쪽: 이미지 섹션 */}
-                <div className="relative w-[65%] bg-black">
+            <div className="max-w-6xl w-full bg-white dark:bg-gray-800 flex flex-col lg:flex-row h-[85vh] lg:h-[85vh]">
+                {/* 이미지 섹션 */}
+                <div className="relative w-full lg:w-[60%] h-[50vh] lg:h-full bg-black">
                     <div
                         className="h-full flex items-center justify-center overflow-hidden"
                         onTouchStart={handleTouchStart}
@@ -121,7 +153,7 @@ export default function Detail({ id, onClose }: DetailProps) {
                                     <img
                                         src={img}
                                         alt={`post-${index + 1}`}
-                                        className="max-h-[80vh] max-w-full object-contain"
+                                        className="h-full w-full object-contain"
                                     />
                                 </div>
                             ))}
@@ -146,29 +178,64 @@ export default function Detail({ id, onClose }: DetailProps) {
                     )}
                 </div>
 
-                {/* 오른쪽: 정보 섹션 */}
-                <div className="w-[35%] flex flex-col border-l dark:border-gray-700">
+                {/* 정보 섹션 */}
+                <div className="w-full lg:w-[40%] flex flex-col border-t lg:border-t-0 lg:border-l dark:border-gray-700 h-[50vh] lg:h-full overflow-hidden">
                     {/* 헤더 */}
-                    <div className="p-4 border-b dark:border-gray-700">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                            <span className="font-semibold dark:text-white">{mockData.memberName}</span>
+                    <div className="p-5 border-b dark:border-gray-700 flex-shrink-0">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0"></div>
+                            <span className="font-semibold text-sm dark:text-white">{mockData.memberName}</span>
                         </div>
                     </div>
 
-                    {/* 내용 */}
-                    <div className="flex-1 p-4 overflow-y-auto">
-                        <h2 className="text-xl font-bold mb-2 dark:text-white">{mockData.title}</h2>
-                        <p className="text-gray-600 dark:text-gray-300">{mockData.content}</p>
+                    {/* 내용과 댓글을 포함하는 스크롤 영역 */}
+                    <div className="flex-1 overflow-y-auto">
+                        <div className="p-5">
+                            <h2 className="text-lg font-bold mb-3 dark:text-white">{mockData.title}</h2>
+                            <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{mockData.content}</p>
+
+                            {/* 댓글 섹션 */}
+                            <div className="space-y-4">
+                                {mockData.comments.map((comment) => (
+                                    <div key={comment.commnetId} className="flex gap-3">
+                                        {/* 프로필 이미지 */}
+                                        <div className="flex-shrink-0 w-8 h-8">
+                                            <img
+                                                src={comment.commentProfileImg}
+                                                alt={comment.commentMemberName}
+                                                className="w-full h-full rounded-full object-cover"
+                                            />
+                                        </div>
+
+                                        {/* 댓글 내용 */}
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-baseline gap-2">
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <span className="font-semibold text-xs dark:text-white flex-shrink-0 w-[60px]">
+                                                        {comment.commentMemberName}
+                                                    </span>
+                                                    <span className="font-semibold text-xs dark:text-white flex-shrink-0 w-[60px]">
+                                                        12/09
+                                                    </span>
+                                                </div>
+                                                <p className="text-xs text-gray-600 dark:text-gray-300 break-words">
+                                                    {comment.commentContent}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
 
                     {/* 좋아요 섹션 */}
-                    <div className="p-4 border-t dark:border-gray-700">
+                    <div className="p-5 border-t dark:border-gray-700 flex gap-3 flex-shrink-0">
                         <div className="flex items-center gap-2">
                             <button className="hover:opacity-80">
-                                <HeartIcon className="w-7 h-7 dark:text-white" />
+                                <HeartIcon className="w-6 h-6 dark:text-white" />
                             </button>
-                            <span className="font-semibold dark:text-white">좋아요 {mockData.likeCount}개</span>
+                            <span className="text-sm font-semibold dark:text-white">좋아요 {mockData.likeCount}개</span>
                         </div>
                     </div>
                 </div>

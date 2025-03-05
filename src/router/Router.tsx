@@ -6,6 +6,7 @@ import Main from "../pages/Main"
 import Grid from "../pages/Grid"
 import Login from "../pages/Login"
 import Signup from "../pages/Login/singup"
+import Profile from "../pages/Profile"
 
 export const router = createBrowserRouter(
     [
@@ -37,6 +38,10 @@ export const router = createBrowserRouter(
                             path: "grid",
                             element: <Grid />,
                         },
+                        {
+                            path: "profile",
+                            element: <Profile />,
+                        }
                     ],
                 },
             ],
