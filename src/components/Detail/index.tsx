@@ -7,49 +7,49 @@ interface DetailProps {
     onClose: () => void;
 }
 
-const mockData = {
-    id: 1,
-    img: ['/img/salgu1.jpg', '/img/salgu2.jpg'],
-    memberName: "제제",
-    title: "타이틀",
-    content: "여기 내용이 들어감",
-    comments: [
-        {
-            commnetId: 1,
-            commentMemberName: "지혜",
-            commentContent: "댓글이 길다면?댓글이 길다면?댓글이 길다면?댓글이 길다면?댓글이 길다면?댓글이 길다면?",
-            commentProfileImg: "/img/salgu1.jpg"
-        },
-        {
-            commnetId: 2,
-            commentMemberName: "지혜",
-            commentContent: "좋은 글 잘 읽었습니다.",
-            commentProfileImg: "/img/salgu1.jpg"
-        },
-        {
-            commnetId: 3,
-            commentMemberName: "지혜",
-            commentContent: "좋은 글 잘 읽었습니다.",
-            commentProfileImg: "/img/salgu1.jpg"
-        },
-        {
-            commnetId: 4,
-            commentMemberName: "지혜",
-            commentContent: "좋은 글 잘 읽었습니다.",
-            commentProfileImg: "/img/salgu1.jpg"
-        },
-        {
-            commnetId: 5,
-            commentMemberName: "지혜",
-            commentContent: "좋은 글 잘 읽었습니다.",
-            commentProfileImg: "/img/salgu1.jpg"
-        }
-    ],
-    likeCount: 10,
-}
+
 
 export default function Detail({ id, onClose }: DetailProps) {
-    id = 1;
+    const mockData = {
+        id: id,
+        img: ['/img/salgu1.jpg', '/img/salgu2.jpg'],
+        memberName: "제제",
+        title: "타이틀",
+        content: "여기 내용이 들어감",
+        comments: [
+            {
+                commnetId: 1,
+                commentMemberName: "지혜",
+                commentContent: "댓글이 길다면?댓글이 길다면?댓글이 길다면?댓글이 길다면?댓글이 길다면?댓글이 길다면?",
+                commentProfileImg: "/img/salgu1.jpg"
+            },
+            {
+                commnetId: 2,
+                commentMemberName: "지혜",
+                commentContent: "좋은 글 잘 읽었습니다.",
+                commentProfileImg: "/img/salgu1.jpg"
+            },
+            {
+                commnetId: 3,
+                commentMemberName: "지혜",
+                commentContent: "좋은 글 잘 읽었습니다.",
+                commentProfileImg: "/img/salgu1.jpg"
+            },
+            {
+                commnetId: 4,
+                commentMemberName: "지혜",
+                commentContent: "좋은 글 잘 읽었습니다.",
+                commentProfileImg: "/img/salgu1.jpg"
+            },
+            {
+                commnetId: 5,
+                commentMemberName: "지혜",
+                commentContent: "좋은 글 잘 읽었습니다.",
+                commentProfileImg: "/img/salgu1.jpg"
+            }
+        ],
+        likeCount: 10,
+    }
     const [currentIndex, setCurrentIndex] = useState(0);
     const [touchStart, setTouchStart] = useState<number | null>(null);
     const [touchEnd, setTouchEnd] = useState<number | null>(null);
