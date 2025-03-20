@@ -1,6 +1,9 @@
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { PhotoIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { useRef, useState, useEffect } from 'react';
+import { registerPostAction } from '../../lib/post';
+import { myToast } from '../../lib/alert';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface RegisterProps {
     onClose: () => void;
@@ -9,6 +12,7 @@ interface RegisterProps {
 type Step = 'select' | 'write';
 
 export default function Register({ onClose }: RegisterProps) {
+    const queryClient = useQueryClient();
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
     const [currentStep, setCurrentStep] = useState<Step>('select');
@@ -51,11 +55,22 @@ export default function Register({ onClose }: RegisterProps) {
 
     const handleSubmit = () => {
         // TODO: API 호출
-        console.log({
-            files: selectedFiles,
-            title,
-            content
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('content', content);
+        selectedFiles.forEach(file => {
+            formData.append('files', file);
         });
+        registerPostAction(formData)
+            .then(() => {
+                myToast('카드뉴스 등록 성공', 'success');
+                queryClient.invalidateQueries({ queryKey: ['posts'] });
+                cleanup()
+                onClose()
+            })
+            .catch((error: any) => {
+                myToast(error.response.data.data.value, 'error')
+            })
     };
 
     return (

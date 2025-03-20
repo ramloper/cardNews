@@ -1,19 +1,22 @@
-import { HeartIcon, ChatBubbleOvalLeftIcon, PaperAirplaneIcon, BookmarkIcon } from '@heroicons/react/24/outline';
+import { ChatBubbleOvalLeftIcon, HeartIcon } from '@heroicons/react/24/outline';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
-import { useState, useRef, TouchEvent } from 'react';
-
-export default function Post() {
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { TouchEvent, useRef, useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
+import { getImages } from '../../lib/image';
+import { ImageType } from '../../types/image';
+import { PostType } from '../../types/post';
+import Detail from '../Detail';
+import { deleteLike } from '../../lib/post';
+import { postLike } from '../../lib/post';
+import { toast } from 'react-toastify';
+export default function Post({ post }: { post: PostType }) {
+    const queryClient = useQueryClient()
+    const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [touchStart, setTouchStart] = useState(0);
     const [touchEnd, setTouchEnd] = useState(0);
     const slideRef = useRef<HTMLDivElement>(null);
-
-    // 예시 이미지 배열 (실제 데이터로 교체 필요)
-    const images = [
-        '/img/salgu1.jpg',
-        '/img/salgu2.jpg',
-        // ... 더 많은 이미지
-    ];
 
     const nextImage = () => {
         if (currentImageIndex < images.length - 1) {
@@ -68,7 +71,41 @@ export default function Post() {
             slideRef.current.style.transform = `translateX(-${currentImageIndex * 100}%)`;
         }
     };
-
+    const likeAction = () => {
+        if (post?.isLike) {
+            deleteLike(post.boardId)
+                .then(() => {
+                    queryClient.invalidateQueries({ queryKey: ['posts'] })
+                    toast.success('좋아요 취소')
+                })
+        } else {
+            postLike(post.boardId)
+                .then(() => {
+                    queryClient.invalidateQueries({ queryKey: ['posts'] })
+                    toast.success('좋아요')
+                })
+        }
+    }
+    const { data: images, isLoading, error } = useQuery({
+        queryKey: ['images', post.imageIds],
+        queryFn: () => getImages(post.imageIds),
+    });
+    if (isLoading) {
+        return (<div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
+            <div className="flex items-center mb-4">
+                <Skeleton circle width={40} height={40} className="mr-3" />
+                <Skeleton width={150} />
+            </div>
+            <Skeleton height={400} className="mb-4" />
+            <div className="space-y-3">
+                <Skeleton width={100} />
+                <Skeleton count={2} />
+            </div>
+        </div>);
+    }
+    if (error) {
+        return <div className="flex justify-center p-4">Error loading posts</div>;
+    }
     return (
         <article className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 mb-4">
             {/* 포스트 헤더 */}
@@ -77,14 +114,14 @@ export default function Post() {
                     <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 p-[2px]">
                         <div className="w-full h-full rounded-full bg-white p-[2px]">
                             <img
-                                src="/img/salgu1.jpg"
+                                src={post.profileImageUrl}
                                 alt="profile"
                                 className="w-full h-full rounded-full object-cover"
                             />
                         </div>
                     </div>
                     <div className="flex flex-col">
-                        <span className="font-semibold text-sm dark:text-white">salgu</span>
+                        <span className="font-semibold text-sm dark:text-white">{post.memberName}</span>
                     </div>
                 </div>
                 {/* <button className="ml-auto">
@@ -103,10 +140,10 @@ export default function Post() {
                         onTouchMove={handleTouchMove}
                         onTouchEnd={handleTouchEnd}
                     >
-                        {images.map((image, index) => (
+                        {images.map((image: ImageType, index: number) => (
                             <img
                                 key={index}
-                                src={image}
+                                src={image.imageUrl}
                                 alt={`post-${index + 1}`}
                                 className="w-full h-full object-cover flex-shrink-0"
                                 draggable={false}
@@ -135,7 +172,7 @@ export default function Post() {
 
                 {/* 인디케이터 dots */}
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
-                    {images.map((_, index) => (
+                    {images.map((_: ImageType, index: number) => (
                         <div
                             key={index}
                             className={`w-1.5 h-1.5 rounded-full transition-colors ${index === currentImageIndex ? 'bg-blue-500' : 'bg-gray-300'
@@ -148,29 +185,35 @@ export default function Post() {
             {/* 포스트 액션 버튼 */}
             <div className="p-4">
                 <div className="flex gap-4">
-                    <button>
-                        <HeartIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
+                    <button onClick={likeAction}>
+                        <HeartIcon className={`w-6 h-6 ${post.isLike ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`} />
                     </button>
-                    <button>
+                    <button onClick={() => setIsDetailOpen(true)}>
                         <ChatBubbleOvalLeftIcon className="w-6 h-6 text-gray-500" />
                     </button>
-                    <button>
+                    {/* <button>
                         <PaperAirplaneIcon className="w-6 h-6 text-gray-500" />
                     </button>
                     <button className="ml-auto">
                         <BookmarkIcon className="w-6 h-6 text-gray-500" />
-                    </button>
+                    </button> */}
                 </div>
                 <div className="mt-2">
-                    <p className="text-sm font-semibold dark:text-white">좋아요 310개</p>
+                    <p className="text-sm font-semibold dark:text-white">좋아요 {post.likeCount}개</p>
                 </div>
                 <div className="mt-2">
                     <p className="text-sm dark:text-gray-300">
-                        <span className="font-semibold dark:text-white">salgu</span> 살구스타그램
+                        <span className="font-semibold dark:text-white">{post.memberName}</span> {post.title}
                     </p>
                 </div>
-                <button className="text-gray-500 text-sm mt-1">댓글 6개 모두 보기</button>
+                <button onClick={() => setIsDetailOpen(true)} className="text-gray-500 text-sm mt-1">댓글 {post.commentCount}개 모두보기</button>
             </div>
+            {isDetailOpen && (
+                <Detail
+                    id={post.boardId}
+                    onClose={() => setIsDetailOpen(false)}
+                />
+            )}
         </article>
     );
 } 

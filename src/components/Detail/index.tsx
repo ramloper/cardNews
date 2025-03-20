@@ -1,7 +1,10 @@
 import { HeartIcon } from '@heroicons/react/24/outline';
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon, } from '@heroicons/react/24/solid';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
-
+import { deleteLike, getPostDetail, postComment, postLike } from '../../lib/post';
+import { formatDate } from '../../lib/function';
+import { toast } from 'react-toastify';
 interface DetailProps {
     id: number;
     onClose: () => void;
@@ -10,46 +13,12 @@ interface DetailProps {
 
 
 export default function Detail({ id, onClose }: DetailProps) {
-    const mockData = {
-        id: id,
-        img: ['/img/salgu1.jpg', '/img/salgu2.jpg'],
-        memberName: "제제",
-        title: "타이틀",
-        content: "여기 내용이 들어감",
-        comments: [
-            {
-                commnetId: 1,
-                commentMemberName: "지혜",
-                commentContent: "댓글이 길다면?댓글이 길다면?댓글이 길다면?댓글이 길다면?댓글이 길다면?댓글이 길다면?",
-                commentProfileImg: "/img/salgu1.jpg"
-            },
-            {
-                commnetId: 2,
-                commentMemberName: "지혜",
-                commentContent: "좋은 글 잘 읽었습니다.",
-                commentProfileImg: "/img/salgu1.jpg"
-            },
-            {
-                commnetId: 3,
-                commentMemberName: "지혜",
-                commentContent: "좋은 글 잘 읽었습니다.",
-                commentProfileImg: "/img/salgu1.jpg"
-            },
-            {
-                commnetId: 4,
-                commentMemberName: "지혜",
-                commentContent: "좋은 글 잘 읽었습니다.",
-                commentProfileImg: "/img/salgu1.jpg"
-            },
-            {
-                commnetId: 5,
-                commentMemberName: "지혜",
-                commentContent: "좋은 글 잘 읽었습니다.",
-                commentProfileImg: "/img/salgu1.jpg"
-            }
-        ],
-        likeCount: 10,
-    }
+    const queryClient = useQueryClient()
+    const [comment, setComment] = useState('')
+    const { data: post, isLoading } = useQuery({
+        queryKey: ['post', id],
+        queryFn: () => getPostDetail(id),
+    });
     const [currentIndex, setCurrentIndex] = useState(0);
     const [touchStart, setTouchStart] = useState<number | null>(null);
     const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -72,11 +41,11 @@ export default function Detail({ id, onClose }: DetailProps) {
     const handleSlide = (direction: 'prev' | 'next') => {
         if (direction === 'prev') {
             setCurrentIndex(prev =>
-                prev === 0 ? mockData.img.length - 1 : prev - 1
+                prev === 0 ? (post?.images.length ?? 0) - 1 : prev - 1
             );
         } else {
             setCurrentIndex(prev =>
-                prev === mockData.img.length - 1 ? 0 : prev + 1
+                prev === (post?.images.length ?? 0) - 1 ? 0 : prev + 1
             );
         }
     };
@@ -107,7 +76,13 @@ export default function Detail({ id, onClose }: DetailProps) {
         setTouchStart(null);
         setTouchEnd(null);
     };
-
+    const onSubmitComment = () => {
+        postComment(id, comment)
+            .then(() => {
+                queryClient.invalidateQueries({ queryKey: ['post'] })
+                toast.success('댓글 달기 성공')
+            })
+    }
     // ESC 키 이벤트 리스너 등록/해제
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
@@ -115,7 +90,33 @@ export default function Detail({ id, onClose }: DetailProps) {
             document.removeEventListener('keydown', handleKeyDown);
         };
     }, [handleKeyDown]);
-
+    const likeAction = () => {
+        if (post?.isLike) {
+            deleteLike(id)
+                .then(() => {
+                    queryClient.invalidateQueries({ queryKey: ['post'] })
+                    toast.success('좋아요 취소')
+                })
+        } else {
+            postLike(id)
+                .then(() => {
+                    queryClient.invalidateQueries({ queryKey: ['post'] })
+                    toast.success('좋아요')
+                })
+        }
+    }
+    if (isLoading) {
+        return <div>Loading...</div>; // 또는 스켈레톤 UI
+    }
+    const comments = post?.comments
+        .filter(comment => comment.commentId !== null)
+        .map((comment) => ({
+            commentId: comment.commentId,
+            commentCreateName: comment.commentCreateName,
+            commentCreateTime: formatDate(comment.commentCreateTime),
+            content: comment.content,
+            commentCreateProfileImageUrl: comment.commentCreateProfileImageUrl,
+        }));
     return (
         <div
             className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center"
@@ -141,10 +142,10 @@ export default function Detail({ id, onClose }: DetailProps) {
                             className="flex transition-transform duration-300 ease-in-out"
                             style={{
                                 transform: `translateX(-${currentIndex * 100}%)`,
-                                width: `${mockData.img.length * 100}%`
+                                width: `${(post?.images.length ?? 0) * 100}%`
                             }}
                         >
-                            {mockData.img.map((img, index) => (
+                            {post?.images.map((img, index) => (
                                 <div
                                     key={index}
                                     className="w-full flex-shrink-0 flex justify-center"
@@ -159,7 +160,7 @@ export default function Detail({ id, onClose }: DetailProps) {
                         </div>
                     </div>
 
-                    {mockData.img.length > 1 && (
+                    {(post?.images.length ?? 0) > 1 && (
                         <>
                             <button
                                 className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:opacity-80"
@@ -182,26 +183,32 @@ export default function Detail({ id, onClose }: DetailProps) {
                     {/* 헤더 */}
                     <div className="p-5 border-b dark:border-gray-700 flex-shrink-0">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0"></div>
-                            <span className="font-semibold text-sm dark:text-white">{mockData.memberName}</span>
+                            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+                                <img
+                                    src={post?.boardCreateProfileImageUrl}
+                                    alt={post?.boardCreateName}
+                                    className="w-full h-full rounded-full object-cover"
+                                />
+                            </div>
+                            <span className="font-semibold text-sm dark:text-white">{post?.boardCreateName}</span>
                         </div>
                     </div>
 
                     {/* 내용과 댓글을 포함하는 스크롤 영역 */}
                     <div className="flex-1 overflow-y-auto">
                         <div className="p-5">
-                            <h2 className="text-lg font-bold mb-3 dark:text-white">{mockData.title}</h2>
-                            <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{mockData.content}</p>
+                            <h2 className="text-lg font-bold mb-3 dark:text-white">{post?.title}</h2>
+                            <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{post?.content}</p>
 
                             {/* 댓글 섹션 */}
                             <div className="space-y-4">
-                                {mockData.comments.map((comment) => (
-                                    <div key={comment.commnetId} className="flex gap-3">
+                                {comments?.map((comment) => (
+                                    <div key={comment?.commentId} className="flex gap-3">
                                         {/* 프로필 이미지 */}
                                         <div className="flex-shrink-0 w-8 h-8">
                                             <img
-                                                src={comment.commentProfileImg}
-                                                alt={comment.commentMemberName}
+                                                src={comment?.commentCreateProfileImageUrl}
+                                                alt={comment?.commentCreateName}
                                                 className="w-full h-full rounded-full object-cover"
                                             />
                                         </div>
@@ -211,14 +218,14 @@ export default function Detail({ id, onClose }: DetailProps) {
                                             <div className="flex items-baseline gap-2">
                                                 <div className="flex flex-col items-center gap-2">
                                                     <span className="font-semibold text-xs dark:text-white flex-shrink-0 w-[60px]">
-                                                        {comment.commentMemberName}
+                                                        {comment?.commentCreateName}
                                                     </span>
                                                     <span className="font-semibold text-xs dark:text-white flex-shrink-0 w-[60px]">
-                                                        12/09
+                                                        {comment?.commentCreateTime}
                                                     </span>
                                                 </div>
                                                 <p className="text-xs text-gray-600 dark:text-gray-300 break-words">
-                                                    {comment.commentContent}
+                                                    {comment?.content}
                                                 </p>
                                             </div>
                                         </div>
@@ -231,10 +238,30 @@ export default function Detail({ id, onClose }: DetailProps) {
                     {/* 좋아요 섹션 */}
                     <div className="p-5 border-t dark:border-gray-700 flex gap-3 flex-shrink-0">
                         <div className="flex items-center gap-2">
-                            <button className="hover:opacity-80">
-                                <HeartIcon className="w-6 h-6 dark:text-white" />
+                            <button onClick={likeAction} className="hover:opacity-80">
+                                <HeartIcon className={`w-6 h-6 ${post?.isLike ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`} />
                             </button>
-                            <span className="text-sm font-semibold dark:text-white">좋아요 {mockData.likeCount}개</span>
+                            <span className="text-sm font-semibold dark:text-white">좋아요 {post?.likeCount}개</span>
+                        </div>
+                    </div>
+                    {/* 댓글 입력 섹션 */}
+                    <div className="px-5 py-4 border-t dark:border-gray-700">
+
+                        <div className="flex items-center gap-3">
+                            <input
+                                type="text"
+                                placeholder="댓글 달기..."
+                                onChange={(e) => setComment(e.target.value)}
+                                value={comment}
+                                className="flex-1 bg-transparent text-sm dark:text-white focus:outline-none"
+                            />
+                            <button
+                                type="button"
+                                className="text-[#0095f6] font-semibold text-sm hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                                onClick={onSubmitComment}
+                            >
+                                게시
+                            </button>
                         </div>
                     </div>
                 </div>

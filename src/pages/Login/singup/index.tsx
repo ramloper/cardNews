@@ -1,11 +1,13 @@
 import { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { onlyNumber, onlyString } from '../../../function/regex';
-
+import { registerMemberAction } from '../../../lib/login';
+import { myToast } from '../../../lib/alert';
 export default function Signup() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         studentId: '',
-        name: '',
+        memberName: '',
         password: '',
         confirmPassword: '',
         profileImage: null as File | null
@@ -19,7 +21,29 @@ export default function Signup() {
             alert('비밀번호가 일치하지 않습니다.');
             return;
         }
-        console.log('Form submitted:', formData);
+
+        // FormData 객체 생성
+        const formDataToSend = new FormData();
+        formDataToSend.append('studentId', formData.studentId);
+        formDataToSend.append('memberName', formData.memberName);
+        formDataToSend.append('password', formData.password);
+
+        // 프로필 이미지가 있는 경우에만 추가
+        if (formData.profileImage) {
+            formDataToSend.append('profileImage', formData.profileImage);
+        }
+
+        // FormData 객체를 전송
+        registerMemberAction(formDataToSend)
+            .then(() => {
+                myToast('회원가입이 성공적으로 완료되었습니다.', 'success');
+                setTimeout(() => {
+                    navigate("/login");
+                }, 100);
+            })
+            .catch((error: any) => {
+                myToast(error.response.data.data.value, 'error')
+            })
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,11 +123,11 @@ export default function Signup() {
                     </div>
                     <div>
                         <input
-                            id='name'
-                            name='name'
+                            id='memberName'
+                            name='memberName'
                             type='text'
                             required
-                            value={onlyString(formData.name)}
+                            value={onlyString(formData.memberName)}
                             onChange={handleChange}
                             className='w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700 focus:outline-none focus:border-gray-400 dark:focus:border-gray-500 dark:text-white'
                             placeholder='이름'

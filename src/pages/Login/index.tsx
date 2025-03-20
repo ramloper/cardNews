@@ -1,30 +1,44 @@
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { onlyNumber, onlyString } from '../../function/regex';
+import { myToast } from '../../lib/alert';
+import { loginAction, setAccessToken } from '../../lib/login';
 
 export default function Login() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         studentId: '',
-        name: '',
+        memberName: '',
         password: ''
     });
     const [shakeInputs, setShakeInputs] = useState({
         studentId: false,
-        name: false
+        memberName: false
     });
 
     // 폼 유효성 검사
     const isFormValid = useMemo(() => {
         return formData.studentId.trim() !== '' &&
-            formData.name.trim() !== '' &&
+            formData.memberName.trim() !== '' &&
             formData.password.trim() !== '';
-    }, [formData.studentId, formData.name, formData.password]);
+    }, [formData.studentId, formData.memberName, formData.password]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
-        navigate('/');
+        loginAction(formData)
+            .then((res: any) => {
+                const accessToken = res.data.data;
+                setAccessToken(accessToken);
+                myToast('로그인 성공', 'success');
+                setTimeout(() => {
+                    navigate("/", { replace: true })
+                }, 100);
+
+            })
+            .catch((error: any) => {
+                myToast(error.response.data.data.value, 'error')
+            })
+
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,15 +51,15 @@ export default function Login() {
         }
 
         // 이름 유효성 검사 (한글만 허용)
-        if (name === 'name' && value !== '' && !/^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z]*$/.test(value)) {
-            setShakeInputs(prev => ({ ...prev, name: true }));
-            setTimeout(() => setShakeInputs(prev => ({ ...prev, name: false })), 500);
+        if (name === 'memberName' && value !== '' && !/^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z]*$/.test(value)) {
+            setShakeInputs(prev => ({ ...prev, memberName: true }));
+            setTimeout(() => setShakeInputs(prev => ({ ...prev, memberName: false })), 500);
         }
 
         setFormData(prev => ({
             ...prev,
             [name]: name === 'studentId' ? onlyNumber(value)
-                : name === 'name' ? onlyString(value)
+                : name === 'memberName' ? onlyString(value)
                     : value
         }));
     };
@@ -86,13 +100,13 @@ export default function Login() {
                     </div>
                     <div>
                         <input
-                            id='name'
-                            name='name'
+                            id='memberName'
+                            name='memberName'
                             type='text'
                             required
-                            value={formData.name}
+                            value={formData.memberName}
                             onChange={handleChange}
-                            className={`w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700 focus:outline-none focus:border-gray-400 dark:focus:border-gray-500 dark:text-white ${shakeInputs.name ? 'shake' : ''}`}
+                            className={`w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700 focus:outline-none focus:border-gray-400 dark:focus:border-gray-500 dark:text-white ${shakeInputs.memberName ? 'shake' : ''}`}
                             placeholder='이름'
                         />
                     </div>
