@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HomeIcon, ViewColumnsIcon, SunIcon, MoonIcon, PlusIcon, BellIcon } from '@heroicons/react/24/solid';
+import { HomeIcon, ViewColumnsIcon, SunIcon, MoonIcon, PlusIcon, BellIcon, ArrowLeftStartOnRectangleIcon, UserIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
 import { useDarkMode } from '../../hooks/useDarkMode';
 import Register from '../Register';
@@ -8,6 +8,7 @@ export default function Navigation() {
     const [isDarkMode, setIsDarkMode] = useDarkMode();
     const [isRegisterOpen, setIsRegisterOpen] = useState(false);
     const admin = localStorage.getItem('admin');
+    const isLogin = localStorage.getItem('accessToken');
     return (
         <>
             <nav className="h-full dark:bg-gray-900">
@@ -27,33 +28,43 @@ export default function Navigation() {
                             <HomeIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
                             <span className="hidden xl:inline dark:text-white">홈</span>
                         </Link>
-                        <Link to="/grid" className="flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
-                            <ViewColumnsIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
-                            <span className="hidden xl:inline dark:text-white">그리드</span>
-                        </Link>
-                        <button
-                            onClick={() => setIsRegisterOpen(true)}
-                            className="flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
-                        >
-                            <PlusIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
-                            <span className="hidden xl:inline dark:text-white">만들기</span>
-                        </button>
-                        <Link to="/profile" className="flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
-                            <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 p-[2px]">
-                                <div className="w-full h-full rounded-full bg-white dark:bg-gray-800 p-[1px]">
-                                    <img
-                                        src="/img/salgu1.jpg"
-                                        alt="profile"
-                                        className="w-full h-full rounded-full object-cover"
-                                    />
-                                </div>
-                            </div>
-                            <span className="hidden xl:inline dark:text-white">프로필</span>
-                        </Link>
+                        {isLogin !== null && (
+                            <Link to="/grid" className="flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+                                <ViewColumnsIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                                <span className="hidden xl:inline dark:text-white">그리드</span>
+                            </Link>
+                        )}
+                        {isLogin !== null && (
+                            <button
+                                onClick={() => setIsRegisterOpen(true)}
+                                className="flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                            >
+                                <PlusIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                                <span className="hidden xl:inline dark:text-white">만들기</span>
+                            </button>
+                        )}
+                        {isLogin !== null && (
+                            <Link to="/profile" className="flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+                                <UserCircleIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                                <span className="hidden xl:inline dark:text-white">프로필</span>
+                            </Link>
+                        )}
                         {admin === 'true' && (
                             <Link to="/notice" className="flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
                                 <BellIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
                                 <span className="hidden xl:inline dark:text-white">공지사항</span>
+                            </Link>
+                        )}
+                        {admin === 'true' && (
+                            <Link to="/waiting" className="flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+                                <UserIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                                <span className="hidden xl:inline dark:text-white">승인대기학생</span>
+                            </Link>
+                        )}
+                        {isLogin !== null && (
+                            <Link to="/login" replace={true} className="flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+                                <ArrowLeftStartOnRectangleIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                                <span className="hidden xl:inline dark:text-white">로그아웃</span>
                             </Link>
                         )}
                     </div>
@@ -126,6 +137,15 @@ export default function Navigation() {
                                 </span>
                             </div>
                         </label>
+                    </div>
+                    <div className="p-3">
+                        <button onClick={() => {
+                            localStorage.removeItem('accessToken');
+                            localStorage.removeItem('refreshToken');
+                            window.location.href = '/login';
+                        }}>
+                            <ArrowLeftStartOnRectangleIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                        </button>
                     </div>
                 </div>
             </nav>

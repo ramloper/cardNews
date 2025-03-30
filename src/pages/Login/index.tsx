@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { onlyNumber, onlyString } from '../../function/regex';
 import { myToast } from '../../lib/alert';
@@ -63,6 +63,11 @@ export default function Login() {
                     : value
         }));
     };
+    useEffect(() => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('admin');
+    }, [])
 
     return (
         <>

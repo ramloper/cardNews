@@ -1,11 +1,11 @@
 import { PostDetailType } from "../types/post";
-import { privateApi } from "./sendApi"
+import { privateApi, publicApi } from "./sendApi"
 
 export const registerPostAction = async (formData: FormData): Promise<any> => {
     return privateApi.post('/auth/board', formData)
 }
 export const getPosts = async (): Promise<any> => {
-    const res = await privateApi.get('/auth/board/list');
+    const res = await publicApi.get('/board/list');
     return res.data.data
 }
 export const getMyPosts = async (): Promise<any> => {

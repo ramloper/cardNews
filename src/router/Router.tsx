@@ -8,6 +8,7 @@ import Login from "../pages/Login"
 import Signup from "../pages/Login/singup"
 import Profile from "../pages/Profile"
 import Notice from "../pages/Notice"
+import Wating from "../pages/Wating"
 export const router = createBrowserRouter(
     [
         {
@@ -45,6 +46,10 @@ export const router = createBrowserRouter(
                         {
                             path: "notice",
                             element: <Notice />,
+                        },
+                        {
+                            path: "waiting",
+                            element: <Wating />,
                         }
                     ],
                 },
