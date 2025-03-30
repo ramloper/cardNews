@@ -15,7 +15,7 @@ export default function MainLayout() {
             </div>
 
             {/* 데스크탑 네비게이션 */}
-            <nav className="hidden lg:block fixed top-0 left-0 h-full xl:w-[244px] w-[80px] border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 z-10">
+            <nav className="hidden lg:block fixed top-0 left-0 h-full xl:w-[244px] w-[100px] border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 z-10">
                 <Navigation />
             </nav>
 

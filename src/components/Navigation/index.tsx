@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HomeIcon, ViewColumnsIcon, SunIcon, MoonIcon, PlusIcon, BellIcon, ArrowLeftStartOnRectangleIcon, UserIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+import { HomeIcon, ViewColumnsIcon, SunIcon, MoonIcon, PlusIcon, BellIcon, ArrowLeftStartOnRectangleIcon, ArrowRightStartOnRectangleIcon, UserIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
 import { useDarkMode } from '../../hooks/useDarkMode';
 import Register from '../Register';
@@ -9,6 +9,7 @@ export default function Navigation() {
     const [isRegisterOpen, setIsRegisterOpen] = useState(false);
     const admin = localStorage.getItem('admin');
     const isLogin = localStorage.getItem('accessToken');
+
     return (
         <>
             <nav className="h-full dark:bg-gray-900">
@@ -67,6 +68,12 @@ export default function Navigation() {
                                 <span className="hidden xl:inline dark:text-white">로그아웃</span>
                             </Link>
                         )}
+                        {isLogin === null && (
+                            <Link to="/login" className="flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+                                <ArrowRightStartOnRectangleIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                                <span className="hidden xl:inline dark:text-white">로그인</span>
+                            </Link>
+                        )}
                     </div>
 
                     {/* 다크모드 토글 버튼 */}
@@ -99,26 +106,24 @@ export default function Navigation() {
                     <Link to="/" className="p-3">
                         <HomeIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
                     </Link>
-                    <Link to="/grid" className="p-3">
-                        <ViewColumnsIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
-                    </Link>
-                    <Link to="/profile" className="p-3">
-                        <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 p-[2px]">
-                            <div className="w-full h-full rounded-full bg-white p-[1px]">
-                                <img
-                                    src="/img/salgu1.jpg"
-                                    alt="profile"
-                                    className="w-full h-full rounded-full object-cover"
-                                />
-                            </div>
-                        </div>
-                    </Link>
-                    <button
-                        onClick={() => setIsRegisterOpen(true)}
-                        className="p-3"
-                    >
-                        <PlusIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
-                    </button>
+                    {isLogin !== null && (
+                        <Link to="/grid" className="p-3">
+                            <ViewColumnsIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                        </Link>
+                    )}
+                    {isLogin !== null && (
+                        <Link to="/profile" className="p-3">
+                            <UserCircleIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                        </Link>
+                    )}
+                    {isLogin !== null && (
+                        <button
+                            onClick={() => setIsRegisterOpen(true)}
+                            className="p-3"
+                        >
+                            <PlusIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                        </button>
+                    )}
                     <div className="p-3">
                         <label className="relative inline-flex items-center cursor-pointer">
                             <input
@@ -138,15 +143,26 @@ export default function Navigation() {
                             </div>
                         </label>
                     </div>
-                    <div className="p-3">
-                        <button onClick={() => {
-                            localStorage.removeItem('accessToken');
-                            localStorage.removeItem('refreshToken');
-                            window.location.href = '/login';
-                        }}>
-                            <ArrowLeftStartOnRectangleIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
-                        </button>
-                    </div>
+                    {isLogin !== null && (
+                        <div className="p-3">
+                            <button onClick={() => {
+                                localStorage.removeItem('accessToken');
+                                localStorage.removeItem('refreshToken');
+                                window.location.href = '/login';
+                            }}>
+                                <ArrowLeftStartOnRectangleIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                            </button>
+                        </div>
+                    )}
+                    {isLogin === null && (
+                        <div className="p-3">
+                            <button onClick={() => {
+                                window.location.href = '/login';
+                            }}>
+                                <ArrowRightStartOnRectangleIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                            </button>
+                        </div>
+                    )}
                 </div>
             </nav>
 
