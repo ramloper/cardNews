@@ -65,8 +65,8 @@ export default function Login() {
     };
     useEffect(() => {
         localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
         localStorage.removeItem('admin');
+
     }, [])
 
     return (

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import { getNotices, registerNoticeAction } from '../../lib/notice';
+import { deleteNoticeAction, getNotices, registerNoticeAction } from '../../lib/notice';
 import { myToast } from '../../lib/alert';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { NoticeType } from '../../types/notice';
@@ -29,6 +29,16 @@ const NoticeWrite = () => {
                 myToast('공지사항 등록 실패', 'error');
             })
     };
+    const deleteNotice = (noticeId: number) => {
+        deleteNoticeAction(noticeId)
+            .then(() => {
+                myToast('공지사항 삭제 성공', 'success');
+                queryClient.invalidateQueries({ queryKey: ['notices'] });
+            })
+            .catch(() => {
+                myToast('공지사항 삭제 실패', 'error');
+            })
+    }
     const { data: notices, isLoading, error } = useQuery({
         queryKey: ['notices'],
         queryFn: getNotices,
@@ -62,9 +72,12 @@ const NoticeWrite = () => {
             <div className="p-4">
                 <div className="space-y-4">
                     {notices?.map((notice: NoticeType) => (
-                        <div className="border-b dark:border-gray-700 pb-2">
-                            <h3 className="font-semibold dark:text-white">{notice.title}</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-300">{notice.content}</p>
+                        <div className="border-b dark:border-gray-700 pb-2 flex justify-between items-center">
+                            <div>
+                                <h3 className="font-semibold dark:text-white">{notice.title}</h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">{notice.content}</p>
+                            </div>
+                            <button className='bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 text-sm' onClick={() => deleteNotice(notice.noticeId ?? 0)}>삭제</button>
                         </div>
                     ))}
                 </div>

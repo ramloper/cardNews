@@ -11,7 +11,7 @@ interface RegisterProps {
 
 type Step = 'select' | 'write';
 
-export default function Register({ onClose }: RegisterProps) {
+const Register = ({ onClose }: RegisterProps) => {
     const queryClient = useQueryClient();
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
@@ -217,6 +217,17 @@ export default function Register({ onClose }: RegisterProps) {
                     )}
                 </div>
             </div>
+            {/* 로딩 스피너 */}
+            {isSubmitting && <LoadingSpinner />}
         </div>
     );
-} 
+}
+export default Register;
+const LoadingSpinner = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white dark:bg-gray-800 p-5 rounded-lg flex flex-col items-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+            <p className="mt-4 text-gray-600 dark:text-gray-300">업로드 중...</p>
+        </div>
+    </div>
+);

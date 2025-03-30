@@ -19,3 +19,7 @@ export const patchTitle = async (title: string): Promise<any> => {
     const res = await privateApi.patch(`/admin/title?title=${title}`);
     return res.data.data
 }
+export const deleteNoticeAction = async (noticeId: number): Promise<any> => {
+    const res = await privateApi.delete(`/admin/notice/${noticeId}`);
+    return res.data.data
+}

@@ -1,7 +1,7 @@
-import { privateApi } from "./sendApi";
+import { publicApi } from "./sendApi";
 
 export const getImages = async (imageIds: number[]): Promise<any> => {
-    const res = await privateApi.get('/auth/image/list', {
+    const res = await publicApi.get('/image/list', {
         params: {
             imageIds: imageIds.join(',')
         }

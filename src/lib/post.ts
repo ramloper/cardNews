@@ -17,7 +17,7 @@ export const getMyLikes = async (): Promise<any> => {
     return res.data.data
 }
 export const getPostDetail = async (boardId: number): Promise<PostDetailType> => {
-    const res = await privateApi.get(`/auth/board/${boardId}`);
+    const res = await publicApi.get(`/board/${boardId}`);
     return res.data.data
 }
 

@@ -22,8 +22,14 @@ const Notice = () => {
     return (
         <aside className="w-[30%]">
             <div className="fixed">
+
                 <h2 className="text-lg font-bold mb-4 dark:text-white">공지사항</h2>
                 <div className="space-y-4 flex flex-col gap-4 justify-center">
+                    {notices?.length === 0 && (
+                        <div className="flex justify-center p-4">
+                            <p className="text-gray-500 dark:text-gray-400">공지사항이 없습니다.</p>
+                        </div>
+                    )}
                     {notices?.map((notice: NoticeType) => (
                         <NoticeItem key={notice.id} notice={notice} />
                     ))}

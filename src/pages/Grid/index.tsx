@@ -46,16 +46,18 @@ export default function Grid() {
     return (
         <div className="max-w-[1000px] mx-auto px-4">
             <div className="flex flex-row items-center justify-center gap-16">
-                {admin === "true" && patchTitleStatus ? (
+                {admin !== null && patchTitleStatus ? (
                     <input type="text" placeholder="제목을 입력해주세요" className="w-[200px] h-[40px] rounded-md border-2 border-gray-300 p-2" value={titleValue} onChange={(e) => setTitleValue(e.target.value)} />
                 ) : (
                     <h1 className="text-[26px] font-bold py-8 dark:text-white text-center">
                         {title?.title}
                     </h1>
                 )}
-                <button className="bg-blue-500 text-white px-4 py-2 rounded-md" onClick={onClickPatchTitleValue}>
-                    제목 수정
-                </button>
+                {admin !== null && (
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded-md" onClick={onClickPatchTitleValue}>
+                        제목 수정
+                    </button>
+                )}
             </div>
             <div className="grid grid-cols-3 gap-1">
                 {posts.map((post: PostType) => (

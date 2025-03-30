@@ -1,5 +1,5 @@
 export type NoticeType = {
-    id?: number;
+    noticeId?: number;
     title: string;
     content: string;
 }

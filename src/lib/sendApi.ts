@@ -7,7 +7,12 @@ export const privateApi = axios.create({
         Authorization: `${localStorage.getItem('accessToken')}`,
     },
 });
-
+export const publicApi = axios.create({
+    baseURL: `${import.meta.env.VITE_BASE_URL}`
+});
+publicApi.interceptors.request.use((config) => {
+    return config
+})
 privateApi.interceptors.request.use((config) => {
     config.headers.Authorization = localStorage.getItem('accessToken')
     return config
@@ -58,16 +63,9 @@ export const sendPublicRequestWithToast = async (requestConfig: AxiosRequestConf
         }
     );
 };
-
-export const publicApi = axios.create({
-    baseURL: `${import.meta.env.VITE_BASE_URL}`
-});
-publicApi.interceptors.request.use((config) => {
-    return config
-})
-publicApi.interceptors.response.use(null, (error) => {
+privateApi.interceptors.response.use(null, (error) => {
     if (error.response?.status === 401) {
-        if (confirm("로그인이 필요합니다. 로그인을 하러 가시겠습니까?"))
+        if (confirm("로그인이 필요합니다. 로그인 페이지로 이동하겠습니까?"))
             window.location.href = '/login'
     }
     return Promise.reject(error)

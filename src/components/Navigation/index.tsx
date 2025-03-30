@@ -1,15 +1,29 @@
 import { useState } from 'react';
 import { HomeIcon, ViewColumnsIcon, SunIcon, MoonIcon, PlusIcon, BellIcon, ArrowLeftStartOnRectangleIcon, ArrowRightStartOnRectangleIcon, UserIcon, UserCircleIcon } from '@heroicons/react/24/solid';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDarkMode } from '../../hooks/useDarkMode';
 import Register from '../Register';
-
+import { logoutAction } from '../../lib/login';
+import { myToast } from '../../lib/alert';
 export default function Navigation() {
+    const navigate = useNavigate();
     const [isDarkMode, setIsDarkMode] = useDarkMode();
     const [isRegisterOpen, setIsRegisterOpen] = useState(false);
     const admin = localStorage.getItem('admin');
     const isLogin = localStorage.getItem('accessToken');
+    const logout = () => {
+        if (confirm('로그아웃 하시겠습니까?')) {
 
+            logoutAction().then(() => {
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('admin');
+                myToast('로그아웃 성공', 'success');
+                navigate('/login', { replace: true });
+            }).catch(() => {
+                myToast('로그아웃 실패', 'error');
+            })
+        }
+    }
     return (
         <>
             <nav className="h-full dark:bg-gray-900">
@@ -63,10 +77,10 @@ export default function Navigation() {
                             </Link>
                         )}
                         {isLogin !== null && (
-                            <Link to="/login" replace={true} className="flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+                            <div onClick={logout} className="flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
                                 <ArrowLeftStartOnRectangleIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
                                 <span className="hidden xl:inline dark:text-white">로그아웃</span>
-                            </Link>
+                            </div>
                         )}
                         {isLogin === null && (
                             <Link to="/login" className="flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
@@ -145,11 +159,7 @@ export default function Navigation() {
                     </div>
                     {isLogin !== null && (
                         <div className="p-3">
-                            <button onClick={() => {
-                                localStorage.removeItem('accessToken');
-                                localStorage.removeItem('refreshToken');
-                                window.location.href = '/login';
-                            }}>
+                            <button onClick={logout}>
                                 <ArrowLeftStartOnRectangleIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
                             </button>
                         </div>
@@ -157,7 +167,7 @@ export default function Navigation() {
                     {isLogin === null && (
                         <div className="p-3">
                             <button onClick={() => {
-                                window.location.href = '/login';
+                                navigate('/login', { replace: true });
                             }}>
                                 <ArrowRightStartOnRectangleIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
                             </button>
