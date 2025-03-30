@@ -21,19 +21,17 @@ export default function Main() {
         return <div className="flex justify-center p-4">Error loading posts</div>;
     }
     return (
-        <div className="max-w-[935px] mx-auto py-4 px-2 pb-20">
-            <div className="flex gap-8">
-                {/* 포스트 영역 - 모바일/태블릿에서는 전체 너비 사용 */}
-                <div className="w-full xl:w-[600px]">
+        <div className="max-w-[935px] mx-auto py-4 px-10 pb-20 pt-10">
+            <div className="flex gap-8 justify-center p-4">
+                <div className="items-center w-full sm:w-[60%]">
                     {/* 포스트 영역 */}
-                    <div className="space-y-8">
+                    <div className="space-y-4">
                         {posts.map((post: PostType) => (
                             <Post key={post.boardId} post={post} />
                         ))}
                     </div>
                 </div>
-                {/* 공지사항 영역 - 모바일/태블릿에서는 숨김 */}
-                <div className="hidden lg:block">
+                <div className="w-[40%] hidden sm:block">
                     <Notice />
                 </div>
             </div>

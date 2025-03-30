@@ -1,4 +1,3 @@
-import { HeartIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 
 export default function Header() {
     return (
@@ -7,12 +6,12 @@ export default function Header() {
                 영선 artgram
             </h1>
             <div className="flex items-center gap-4">
-                <button>
+                {/* <button>
                     <HeartIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                 </button>
                 <button>
                     <PaperAirplaneIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
-                </button>
+                </button> */}
             </div>
         </header>
     );

@@ -1,16 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { getMemberSimpleInfo } from '../../lib/member';
-import { ThumbnailType } from '../../types/thumbnail';
-import { MemberSimpleInfoType } from '../../types/member';
-import { getMyLikes, getMyPosts } from '../../lib/post';
-import { PostType } from '../../types/post';
 import Thumbnail from '../../components/Thumbnail';
+import { getMemberSimpleInfo } from '../../lib/member';
+import { getMyLikes, getMyPosts } from '../../lib/post';
+import { MemberSimpleInfoType } from '../../types/member';
+import { PostType } from '../../types/post';
 type TabType = 'posts' | 'likes';
 
 export default function Profile() {
     const [currentTab, setCurrentTab] = useState<TabType>('posts');
+    const onClickCurrentTab = (tab: TabType) => {
+        setCurrentTab(tab)
+    }
     const { data: userInfo, isLoading, error } = useQuery<MemberSimpleInfoType>({
         queryKey: ['memberSimpleInfo'],
         queryFn: getMemberSimpleInfo,
@@ -59,7 +61,7 @@ export default function Profile() {
                             ? 'border-black dark:border-white text-black dark:text-white'
                             : 'border-transparent text-gray-500'
                             }`}
-                        onClick={() => setCurrentTab('posts')}
+                        onClick={() => onClickCurrentTab('posts')}
                     >
                         게시물
                     </button>
@@ -68,7 +70,7 @@ export default function Profile() {
                             ? 'border-black dark:border-white text-black dark:text-white'
                             : 'border-transparent text-gray-500'
                             }`}
-                        onClick={() => setCurrentTab('likes')}
+                        onClick={() => onClickCurrentTab('likes')}
                     >
                         좋아요
                     </button>
@@ -81,9 +83,10 @@ export default function Profile() {
 }
 
 const MyPosts = ({ tabType }: { tabType: TabType }) => {
+
     const api = tabType === 'posts' ? getMyPosts : getMyLikes;
     const { data: posts, isLoading, error } = useQuery<PostType[]>({
-        queryKey: ['myPosts'],
+        queryKey: [tabType === 'posts' ? 'myPosts' : 'myLikes'],
         queryFn: api,
     });
     if (isLoading) {

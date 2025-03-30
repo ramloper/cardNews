@@ -13,7 +13,7 @@ export const getMyPosts = async (): Promise<any> => {
     return res.data.data
 }
 export const getMyLikes = async (): Promise<any> => {
-    const res = await privateApi.get('/auth/board/my/like');
+    const res = await privateApi.get('/auth/board/like/list');
     return res.data.data
 }
 export const getPostDetail = async (boardId: number): Promise<PostDetailType> => {

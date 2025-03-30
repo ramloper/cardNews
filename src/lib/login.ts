@@ -10,3 +10,8 @@ export const setAccessToken = (accessToken: string) => {
 export const registerMemberAction = async (formData: FormData): Promise<any> => {
     return publicApi.post('/member', formData, { withCredentials: true })
 }
+export const adminCheck = (formData: loginParam) => {
+    if (formData.studentId === '0' && formData.memberName === '박지혜') {
+        localStorage.setItem('admin', 'true');
+    }
+}

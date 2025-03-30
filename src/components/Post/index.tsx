@@ -76,12 +76,14 @@ export default function Post({ post }: { post: PostType }) {
             deleteLike(post.boardId)
                 .then(() => {
                     queryClient.invalidateQueries({ queryKey: ['posts'] })
+                    queryClient.invalidateQueries({ queryKey: ['myLikes'] })
                     toast.success('좋아요 취소')
                 })
         } else {
             postLike(post.boardId)
                 .then(() => {
                     queryClient.invalidateQueries({ queryKey: ['posts'] })
+                    queryClient.invalidateQueries({ queryKey: ['myLikes'] })
                     toast.success('좋아요')
                 })
         }

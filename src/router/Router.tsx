@@ -7,7 +7,7 @@ import Grid from "../pages/Grid"
 import Login from "../pages/Login"
 import Signup from "../pages/Login/singup"
 import Profile from "../pages/Profile"
-
+import Notice from "../pages/Notice"
 export const router = createBrowserRouter(
     [
         {
@@ -41,6 +41,10 @@ export const router = createBrowserRouter(
                         {
                             path: "profile",
                             element: <Profile />,
+                        },
+                        {
+                            path: "notice",
+                            element: <Notice />,
                         }
                     ],
                 },

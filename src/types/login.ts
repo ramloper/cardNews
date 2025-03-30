@@ -9,3 +9,4 @@ export interface registerMemberParam {
     password: string,
     profileImage: File | null
 }
+

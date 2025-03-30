@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HomeIcon, ViewColumnsIcon, SunIcon, MoonIcon, PlusIcon } from '@heroicons/react/24/solid';
+import { HomeIcon, ViewColumnsIcon, SunIcon, MoonIcon, PlusIcon, BellIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
 import { useDarkMode } from '../../hooks/useDarkMode';
 import Register from '../Register';
@@ -7,7 +7,7 @@ import Register from '../Register';
 export default function Navigation() {
     const [isDarkMode, setIsDarkMode] = useDarkMode();
     const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-
+    const admin = localStorage.getItem('admin');
     return (
         <>
             <nav className="h-full dark:bg-gray-900">
@@ -50,6 +50,12 @@ export default function Navigation() {
                             </div>
                             <span className="hidden xl:inline dark:text-white">프로필</span>
                         </Link>
+                        {admin === 'true' && (
+                            <Link to="/notice" className="flex items-center gap-4 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+                                <BellIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+                                <span className="hidden xl:inline dark:text-white">공지사항</span>
+                            </Link>
+                        )}
                     </div>
 
                     {/* 다크모드 토글 버튼 */}

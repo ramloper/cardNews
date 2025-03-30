@@ -7,7 +7,7 @@ export default {
     theme: {
         extend: {
             screens: {
-                'sm': '390px',    // 모바일
+                'sm': '400px',    // 모바일
                 'md': '1024px',    // 태블릿
                 'lg': '1025px',   // 데스크탑
                 'xl': '1400px',   // 와이드 데스크탑

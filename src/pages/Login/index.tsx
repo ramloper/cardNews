@@ -2,8 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { onlyNumber, onlyString } from '../../function/regex';
 import { myToast } from '../../lib/alert';
-import { loginAction, setAccessToken } from '../../lib/login';
-
+import { loginAction, setAccessToken, adminCheck } from '../../lib/login';
 export default function Login() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -29,6 +28,7 @@ export default function Login() {
             .then((res: any) => {
                 const accessToken = res.data.data;
                 setAccessToken(accessToken);
+                adminCheck(formData);
                 myToast('로그인 성공', 'success');
                 setTimeout(() => {
                     navigate("/", { replace: true })

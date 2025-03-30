@@ -19,6 +19,7 @@ export default function Register({ onClose }: RegisterProps) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const MAX_FILES = 20;
 
@@ -54,23 +55,30 @@ export default function Register({ onClose }: RegisterProps) {
     };
 
     const handleSubmit = () => {
-        // TODO: API 호출
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
+
         const formData = new FormData();
         formData.append('title', title);
         formData.append('content', content);
         selectedFiles.forEach(file => {
             formData.append('files', file);
         });
+
         registerPostAction(formData)
             .then(() => {
                 myToast('카드뉴스 등록 성공', 'success');
                 queryClient.invalidateQueries({ queryKey: ['posts'] });
-                cleanup()
-                onClose()
+                cleanup();
+                onClose();
             })
             .catch((error: any) => {
-                myToast(error.response.data.data.value, 'error')
+                myToast(error.response.data.data.value, 'error');
             })
+            .finally(() => {
+                setIsSubmitting(false);
+            });
     };
 
     return (
@@ -108,7 +116,7 @@ export default function Register({ onClose }: RegisterProps) {
                                         onClick={() => fileInputRef.current?.click()}
                                         className="bg-[#0095f6] hover:bg-[#1877f2] text-white px-6 py-2.5 rounded-lg font-semibold"
                                     >
-                                        컴퓨터에서 선택
+                                        사진 선택
                                     </button>
                                 </div>
                             ) : (
