@@ -8,7 +8,7 @@ import { getPosts } from "../../lib/post";
 import { PostType } from "../../types/post";
 export default function Grid() {
     const queryClient = useQueryClient();
-
+    const admin = localStorage.getItem('admin');
 
     const { data: posts, isLoading, error } = useQuery({
         queryKey: ['posts'],
@@ -46,7 +46,7 @@ export default function Grid() {
     return (
         <div className="max-w-[1000px] mx-auto px-4">
             <div className="flex flex-row items-center justify-center gap-16">
-                {patchTitleStatus ? (
+                {admin === "true" && patchTitleStatus ? (
                     <input type="text" placeholder="제목을 입력해주세요" className="w-[200px] h-[40px] rounded-md border-2 border-gray-300 p-2" value={titleValue} onChange={(e) => setTitleValue(e.target.value)} />
                 ) : (
                     <h1 className="text-[26px] font-bold py-8 dark:text-white text-center">
