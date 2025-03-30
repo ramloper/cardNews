@@ -1,11 +1,11 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import Thumbnail from "../../components/Thumbnail";
+import { myToast } from "../../lib/alert";
+import { getTitle, patchTitle } from "../../lib/notice";
 import { getPosts } from "../../lib/post";
 import { PostType } from "../../types/post";
-import { getTitle, patchTitle } from "../../lib/notice";
-import { useState, useEffect } from "react";
-import { myToast } from "../../lib/alert";
 export default function Grid() {
     const queryClient = useQueryClient();
 
